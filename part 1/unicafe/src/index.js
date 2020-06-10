@@ -19,10 +19,40 @@ const Stat = ({ text, value }) => {
   return <p>{text} {value}</p>
 }
 const Stats = ({ stats }) => {
+  const total = () => {
+    let total = 0
+    for (const stat of stats) {
+      total += stat.value
+    }
+    return total
+  }
+  const average = (total) => {
+    let average = 0
+    for (const stat of stats) {
+      average += stat.value * stat.score
+    }
+    if (total !== 0)
+      average /= total
+    else average = 0
+    return average
+  }
+
+  const positive = (total) => {
+    let positiveCount = 0
+    for (const stat of stats) {
+      if (stat.value * stat.score > 0) positiveCount = stat.value
+    }
+    return total === 0 ? '0 %' : positiveCount / total * 100 + ' %'
+  }
+
+  let feedbackCount = total()
   return <div>
     <Stat text={stats[0].text} value={stats[0].value} />
     <Stat text={stats[1].text} value={stats[1].value} />
     <Stat text={stats[2].text} value={stats[2].value} />
+    <Stat text='all' value={feedbackCount} />
+    <Stat text='average' value={average(feedbackCount)} />
+    <Stat text='positive' value={positive(feedbackCount)} />
   </div>
 }
 
@@ -39,9 +69,9 @@ const App = () => {
     { handleClick: handleClick(setBad, badCount), text: 'bad' }
   ]
   const stats = [
-    { text: 'good', value: goodCount },
-    { text: 'neutral', value: neutralCount },
-    { text: 'bad', value: badCount },
+    { text: 'good', value: goodCount, score: 1 },
+    { text: 'neutral', value: neutralCount, score: 0 },
+    { text: 'bad', value: badCount, score: -1 },
   ]
 
   return <div>
