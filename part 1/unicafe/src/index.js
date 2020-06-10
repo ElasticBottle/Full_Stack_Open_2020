@@ -27,14 +27,11 @@ const Stats = ({ stats }) => {
     return total
   }
   const average = (total) => {
-    let average = 0
+    let totalScore = 0
     for (const stat of stats) {
-      average += stat.value * stat.score
+      totalScore += stat.value * stat.score
     }
-    if (total !== 0)
-      average /= total
-    else average = 0
-    return average
+    return totalScore / total
   }
 
   const positive = (total) => {
@@ -42,10 +39,13 @@ const Stats = ({ stats }) => {
     for (const stat of stats) {
       if (stat.value * stat.score > 0) positiveCount = stat.value
     }
-    return total === 0 ? '0 %' : positiveCount / total * 100 + ' %'
+    return positiveCount / total * 100 + ' %'
   }
 
   let feedbackCount = total()
+  if (feedbackCount === 0) {
+    return <p>No feedback given</p>
+  }
   return <div>
     <Stat text={stats[0].text} value={stats[0].value} />
     <Stat text={stats[1].text} value={stats[1].value} />
