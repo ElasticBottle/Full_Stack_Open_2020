@@ -48,6 +48,7 @@ const App = ({ anecdotes }) => {
     updatedVotes[anecdote] += 1
     setVote(updatedVotes)
   }
+  let maxVotes = indexOfMax(votes)
   return <div>
     <Title text='Anecdote of the day' />
     <p>
@@ -58,8 +59,9 @@ const App = ({ anecdotes }) => {
     <Button handleClick={getRandomAnecdote} text='next anecdote' />
     <Title text='Anecdote with most votes' />
     <p>
-      {anecdotes[indexOfMax(votes)]}
+      {anecdotes[maxVotes]}
     </p>
+    <Vote value={votes[maxVotes]} />
   </div>
 }
 
