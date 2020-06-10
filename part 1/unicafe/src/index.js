@@ -16,7 +16,10 @@ const Buttons = ({ buttonProperty }) => {
 }
 
 const Stat = ({ text, value }) => {
-  return <p>{text} {value}</p>
+  return <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
 }
 const Stats = ({ stats }) => {
   const total = () => {
@@ -46,14 +49,16 @@ const Stats = ({ stats }) => {
   if (feedbackCount === 0) {
     return <p>No feedback given</p>
   }
-  return <div>
-    <Stat text={stats[0].text} value={stats[0].value} />
-    <Stat text={stats[1].text} value={stats[1].value} />
-    <Stat text={stats[2].text} value={stats[2].value} />
-    <Stat text='all' value={feedbackCount} />
-    <Stat text='average' value={average(feedbackCount)} />
-    <Stat text='positive' value={positive(feedbackCount)} />
-  </div>
+  return <table>
+    <tbody>
+      <Stat text={stats[0].text} value={stats[0].value} />
+      <Stat text={stats[1].text} value={stats[1].value} />
+      <Stat text={stats[2].text} value={stats[2].value} />
+      <Stat text='all' value={feedbackCount} />
+      <Stat text='average' value={average(feedbackCount)} />
+      <Stat text='positive' value={positive(feedbackCount)} />
+    </tbody>
+  </table>
 }
 
 const App = () => {
