@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 const Person = ({ person }) => {
   return <div>
-    {person.name}
+    {person.name} {person.number}
   </div>
 }
 
@@ -13,22 +13,50 @@ const People = ({ people }) => {
 }
 
 function App() {
-  const [people, setPerson] = useState([]);
+  const [people, setPerson] = useState([
+    { name: 'Arto Hellas', number: '040-123456' },
+    { name: 'Ada Lovelace', number: '39-44-5323523' },
+    { name: 'Dan Abramov', number: '12-43-234345' },
+    { name: 'Mary Poppendieck', number: '39-23-6423122' }
+  ]);
   const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
 
-  const handleChange = (event) => {
-    console.log(event);
-    console.log(event.target.value);
-    setNewName(event.target.value)
+  const handleNameChange = (event) => setNewName(event.target.value)
+
+  const handleNumberChange = (event) => setNewNumber(event.target.value)
+
+  const isNumberValid = (newNumber) => {
+    return newNumber.length !== 0
   }
+
+  const isNameValid = (newName) => {
+    const existing = people.filter(person => person.name.toLowerCase() === newName.toLowerCase())
+    return existing.length === 0
+  }
+
+  const isEmpty = (value) => value.length === 0
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    const numberValid = isNumberValid(newNumber)
+    const nameValid = isNameValid(newName)
+    const nameEmpty = isEmpty(newName)
+    const numberEmpty = isEmpty(newNumber)
     const newPerson = {
-      name: newName
+      name: newName,
+      number: newNumber
     }
-    if (people.filter(person => person.name = newPerson.name).length != 0) {
-      window.alert('${newPerson.name} is already added to phone book')
+    if (nameEmpty) {
+      window.alert('Please enter a name')
+    }
+    else if (numberEmpty) {
+      window.alert(`Please enter a number`)
+    }
+    else if (!nameValid) {
+      window.alert(`${newPerson.name} is already added to phone book`)
+    } else if (!numberValid) {
+      window.alert(`${newNumber} is not a valid phone number`)
     }
     else {
       setPerson(people.concat(newPerson))
@@ -41,7 +69,10 @@ function App() {
       <h2>Phone book</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          name: <input value={newName} onChange={handleChange} />
+          name: <input value={newName} onChange={handleNameChange} />
+        </div>
+        <div>
+          number: <input value={newNumber} onChange={handleNumberChange} />
         </div>
         <div>
           <button type='submit'>add</button>
