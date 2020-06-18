@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import People from './components/people'
 import PersonForm from './components/person_form'
 import Filter from './components/filter'
+import axios from 'axios'
 
 
 function App() {
-  const [people, setPerson] = useState([
-    { name: 'Arto Hellas', number: '040-123456' },
-    { name: 'Ada Lovelace', number: '39-44-5323523' },
-    { name: 'Dan Abramov', number: '12-43-234345' },
-    { name: 'Mary Poppendieck', number: '39-23-6423122' }
-  ]);
+  const [people, setPerson] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [filterString, setFilterString] = useState('');
+
+  const phoneNumberRetrieval = () => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log(response.data);
+        setPerson(response.data)
+      })
+  }
+  useEffect(phoneNumberRetrieval, [])
 
   return (
     <div>
