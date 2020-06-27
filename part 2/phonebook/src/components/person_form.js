@@ -1,4 +1,5 @@
 import React from 'react'
+import contactService from '../services/contact'
 
 
 const handleNameChange = (setNewName) => (event) => setNewName(event.target.value)
@@ -38,9 +39,13 @@ const handleSubmit = (setPerson, people, setNewName, setNewNumber, newName, newN
         window.alert(`${newNumber} is not a valid phone number`)
     }
     else {
-        setPerson(people.concat(newPerson))
-        setNewName('')
-        setNewNumber('')
+        contactService.addNew(newPerson).then(
+            (response) => {
+                setPerson(people.concat(response.data))
+                setNewName('')
+                setNewNumber('')
+            }
+        )
     }
 }
 

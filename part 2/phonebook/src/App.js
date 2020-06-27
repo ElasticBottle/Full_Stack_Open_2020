@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import People from './components/people'
 import PersonForm from './components/person_form'
 import Filter from './components/filter'
-import axios from 'axios'
+import contactService from './services/contact'
 
 
 function App() {
@@ -12,8 +12,7 @@ function App() {
   const [filterString, setFilterString] = useState('');
 
   const phoneNumberRetrieval = () => {
-    axios
-      .get('http://localhost:3001/persons')
+    contactService.getAll()
       .then(response => {
         console.log(response.data);
         setPerson(response.data)
