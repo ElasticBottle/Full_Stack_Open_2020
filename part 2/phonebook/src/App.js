@@ -27,7 +27,7 @@ function App() {
       <h2>Add a new</h2>
       <PersonForm newName={newName} setNewName={setNewName} newNumber={newNumber} setNewNumber={setNewNumber} people={people} setPerson={setPerson} />
       <h2>Numbers</h2>
-      <People people={people} filterString={filterString} />
+      <People people={people} setPerson={setPerson} filterString={filterString} />
     </div>
   );
 }

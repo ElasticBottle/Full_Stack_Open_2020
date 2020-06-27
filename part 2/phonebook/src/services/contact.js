@@ -10,4 +10,8 @@ const addNew = (contact) => {
     return axios.post(baseURL, contact)
 }
 
-export default { getAll, addNew }
+const removeExisting = (id) => {
+    return axios.delete(`${baseURL}/${id}`)
+}
+
+export default { getAll, addNew, removeExisting }
