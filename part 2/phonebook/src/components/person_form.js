@@ -10,17 +10,22 @@ const isNumberValid = (newNumber) => {
     return newNumber.length !== 0
 }
 
-const isNameValid = (people, newName) => {
+const isUpdating = (people, newName) => {
     const existing = people.filter(person => person.name.toLowerCase() === newName.toLowerCase())
-    return existing.length === 0
+    return existing.length !== 0
 }
 
 const isEmpty = (value) => value.length === 0
 
+const resetField = (setNewNumber, setNewName) => {
+    setNewName('')
+    setNewNumber('')
+}
+
 const handleSubmit = (setPerson, people, setNewName, setNewNumber, newName, newNumber) => (event) => {
     event.preventDefault()
     const numberValid = isNumberValid(newNumber)
-    const nameValid = isNameValid(people, newName)
+    const updating = isUpdating(people, newName)
     const nameEmpty = isEmpty(newName)
     const numberEmpty = isEmpty(newNumber)
     const newPerson = {
@@ -33,17 +38,31 @@ const handleSubmit = (setPerson, people, setNewName, setNewNumber, newName, newN
     else if (numberEmpty) {
         window.alert(`Please enter a number`)
     }
-    else if (!nameValid) {
-        window.alert(`${newPerson.name} is already added to phone book`)
-    } else if (!numberValid) {
+    else if (!numberValid) {
         window.alert(`${newNumber} is not a valid phone number`)
+    } else if (updating) {
+        if (window.confirm(`${newPerson.name} is already added to phone book, update old number with a new one?`)) {
+            console.log('update number');
+            const toUpdate = people.filter(person => person.name === newPerson.name)
+            contactService
+                .updateExisting(toUpdate[0].id, newPerson)
+                .then(
+                    response => {
+                        const updatedPeople = people.map(person => {
+                            return person.id === response.data.id ? response.data : person
+                        })
+                        console.log(updatedPeople);
+                        setPerson(updatedPeople)
+                        resetField(setNewNumber, setNewName)
+                    }
+                )
+        }
     }
     else {
         contactService.addNew(newPerson).then(
             (response) => {
                 setPerson(people.concat(response.data))
-                setNewName('')
-                setNewNumber('')
+                resetField(setNewNumber, setNewName)
             }
         )
     }
