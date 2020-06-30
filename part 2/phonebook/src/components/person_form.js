@@ -22,7 +22,7 @@ const resetField = (setNewNumber, setNewName) => {
     setNewNumber('')
 }
 
-const handleSubmit = (setPerson, people, setNewName, setNewNumber, newName, newNumber) => (event) => {
+const handleSubmit = (setPerson, people, setNewName, setNewNumber, newName, newNumber, setMessage) => (event) => {
     event.preventDefault()
     const numberValid = isNumberValid(newNumber)
     const updating = isUpdating(people, newName)
@@ -33,16 +33,18 @@ const handleSubmit = (setPerson, people, setNewName, setNewNumber, newName, newN
         number: newNumber
     }
     if (nameEmpty) {
-        window.alert('Please enter a name')
+        setMessage({ content: 'Please enter a name', isError: true })
+        setTimeout(() => setMessage({ content: null, isError: false }), 3000)
     }
     else if (numberEmpty) {
-        window.alert(`Please enter a number`)
+        setMessage({ content: `Please enter a number`, isError: true })
+        setTimeout(() => setMessage({ content: null, isError: false }), 3000)
     }
     else if (!numberValid) {
-        window.alert(`${newNumber} is not a valid phone number`)
+        setMessage({ content: `${newNumber} is not a valid phone number`, isError: true })
+        setTimeout(() => setMessage({ content: null, isError: false }), 3000)
     } else if (updating) {
         if (window.confirm(`${newPerson.name} is already added to phone book, update old number with a new one?`)) {
-            console.log('update number');
             const toUpdate = people.filter(person => person.name === newPerson.name)
             contactService
                 .updateExisting(toUpdate[0].id, newPerson)
@@ -52,24 +54,39 @@ const handleSubmit = (setPerson, people, setNewName, setNewNumber, newName, newN
                             return person.id === response.data.id ? response.data : person
                         })
                         console.log(updatedPeople);
+                        setMessage({ content: `${newPerson.name}'s contact has been updated`, isError: false })
+                        setTimeout(() => setMessage({ content: null, isError: false }), 3000)
                         setPerson(updatedPeople)
                         resetField(setNewNumber, setNewName)
                     }
                 )
+                .catch(error => {
+                    setMessage({ content: `${newPerson.name}'s contact has been deleted from the server before this`, isError: true })
+                    setTimeout(() => setMessage({ content: null, isError: false }), 3000)
+                    setPerson(people.filter(person => person.name !== toUpdate.name))
+                })
         }
     }
     else {
-        contactService.addNew(newPerson).then(
-            (response) => {
-                setPerson(people.concat(response.data))
-                resetField(setNewNumber, setNewName)
-            }
-        )
+        contactService
+            .addNew(newPerson)
+            .then(
+                (response) => {
+                    setMessage({ content: `${newPerson.name}'s contact has been added`, isError: false })
+                    setTimeout(() => setMessage({ content: null, isError: false }), 3000)
+                    setPerson(people.concat(response.data))
+                    resetField(setNewNumber, setNewName)
+                }
+            )
+            .catch(error => {
+                setMessage({ content: 'something happened...', isError: true })
+                setTimeout(() => setMessage({ content: null, isError: false }), 3000)
+            })
     }
 }
 
-const PersonForm = ({ newName, setNewName, newNumber, setNewNumber, setPerson, people }) => {
-    return <form onSubmit={handleSubmit(setPerson, people, setNewName, setNewNumber, newName, newNumber)}>
+const PersonForm = ({ newName, setNewName, newNumber, setNewNumber, setPerson, people, setMessage }) => {
+    return <form onSubmit={handleSubmit(setPerson, people, setNewName, setNewNumber, newName, newNumber, setMessage)}>
         <div>
             name: <input value={newName} onChange={handleNameChange(setNewName)} />
         </div>

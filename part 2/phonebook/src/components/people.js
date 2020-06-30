@@ -2,7 +2,7 @@ import React from 'react'
 import Person from './person'
 
 
-const People = ({ people, setPerson, filterString }) => {
+const People = ({ people, setPerson, filterString, setMessage }) => {
 
     const filtered = people.filter((person) => {
         const name = person.name.toLowerCase()
@@ -10,7 +10,7 @@ const People = ({ people, setPerson, filterString }) => {
         return contains
     })
     return filtered.map((person) => {
-        return <Person key={person.name} person={person} people={people} setPerson={setPerson} />
+        return <Person key={person.name} person={person} people={people} setPerson={setPerson} setMessage={setMessage} />
 
     })
 }
